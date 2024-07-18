@@ -12,15 +12,16 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AuthnAuthzService {
 
-    final String URL = "http://localhost:8080/authorization/admin";
-
+    public final static String ADMIN_ROLE = "ADMIN";
+    public final static String USER_ROLE = "USER";
+    private final String URL = "http://localhost:8080/authorization";
     private final HttpServletRequest request;
 
     public AuthnAuthzService(HttpServletRequest request) {
         this.request = request;
     }
 
-    public Boolean verifyIfUserHasAdminRole() {
+    public Boolean verifyUserRole(String role) {
         var token = request.getHeader("Authorization");
         if(token == null) return false;
 
@@ -28,7 +29,7 @@ public class AuthnAuthzService {
         var headers = new HttpHeaders();
         headers.set("Authorization", token);
 
-        RequestEntity<Void> requestEntity = RequestEntity.get(URL).headers(headers).build();
+        RequestEntity<Void> requestEntity = buildRequest(headers, role);
 
         try {
             HttpStatusCode statusCode = restTemplate
@@ -43,5 +44,11 @@ public class AuthnAuthzService {
             // Trata erros do tipo 5xx
             return false;
         }
+    }
+
+    private RequestEntity<Void> buildRequest(HttpHeaders headers, String role) {
+        return role.equals(ADMIN_ROLE)
+                ? RequestEntity.get(URL + "/admin").headers(headers).build()
+                : RequestEntity.get(URL + "/user").headers(headers).build();
     }
 }
