@@ -1,11 +1,11 @@
-package com.felipe.ms_patient_labcenter.validators.cpf;
+package com.felipe.ms_patient_labcenter.validators.phoneNumber;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
-public class CpfValidator implements ConstraintValidator<CpfConstraint, String> {
+public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberConstraint, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
