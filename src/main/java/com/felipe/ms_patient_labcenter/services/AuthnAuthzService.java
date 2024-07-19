@@ -22,16 +22,12 @@ public class AuthnAuthzService {
     }
 
     public Boolean verifyUserRole(String role) {
-        var token = request.getHeader("Authorization");
-        if(token == null) return false;
+        RequestEntity<Void> requestEntity = buildRequest(role);
 
-        var restTemplate = new RestTemplate();
-        var headers = new HttpHeaders();
-        headers.set("Authorization", token);
-
-        RequestEntity<Void> requestEntity = buildRequest(headers, role);
+        if(requestEntity == null) return false;
 
         try {
+            var restTemplate = new RestTemplate();
             HttpStatusCode statusCode = restTemplate
                     .exchange(requestEntity, Void.class)
                     .getStatusCode();
@@ -46,7 +42,13 @@ public class AuthnAuthzService {
         }
     }
 
-    private RequestEntity<Void> buildRequest(HttpHeaders headers, String role) {
+    private RequestEntity<Void> buildRequest(String role) {
+        var token = request.getHeader("Authorization");
+        if(token == null) return null;
+
+        var headers = new HttpHeaders();
+        headers.set("Authorization", token);
+
         return role.equals(ADMIN_ROLE)
                 ? RequestEntity.get(URL + "/admin").headers(headers).build()
                 : RequestEntity.get(URL + "/user").headers(headers).build();
