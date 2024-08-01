@@ -14,12 +14,11 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({
-            FieldAlreadyInUseException.class,
-            ResourceNotFoundException.class,
-    })
-    protected ResponseEntity<ApiGlobalResponseDTO> handleFieldAlreadyInUseException(RuntimeException ex) {
-        var response = new ApiGlobalResponseDTO(ex.getMessage());
+    @ExceptionHandler(FieldAlreadyInUseException.class)
+    protected ResponseEntity<ApiGlobalResponseDTO> handleFieldAlreadyInUseException(FieldAlreadyInUseException ex) {
+        var error = new HashMap<String, String>();
+        error.put(ex.getFieldError(), ex.getMessage());
+        var response = new ApiGlobalResponseDTO(error);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
